@@ -1,4 +1,4 @@
-package com.example.agent_app_ecobank
+package com.example.agent_app_sedian
 
 import io.flutter.embedding.android.FlutterActivity
 
