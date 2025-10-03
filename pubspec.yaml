@@ -2,7 +2,7 @@ name: agent_app_ecobank
 description: "Ecobank Agent App"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -56,22 +56,20 @@ flutter_launcher_icons:
   # Adaptive layers (provide foreground with transparent padding and a solid bg)
 #  adaptive_icon_background: "#0E7490"
 #  adaptive_icon_foreground: assets/images/Ecobank-logo.png   # uses existing file
-  # adaptive_icon_monochrome: assets/images/app_icon_monochrome.png  # for Android 13+
+# adaptive_icon_monochrome: assets/images/app_icon_monochrome.png  # for Android 13+
 
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  #flutter_lints: ^5.0.0
+# The "flutter_lints" package below contains a set of recommended lints to
+# encourage good coding practices. The lint set provided by the package is
+# activated in the `analysis_options.yaml` file located at the root of your
+# package. See that file for information about deactivating specific lint
+# rules and activating additional ones.
+#flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -79,6 +77,7 @@ flutter:
   assets:
     - assets/images/Ecobank-logo.png
     - assets/images/background-img.jpg
+    - assets/images/background-img1.png
     - assets/images/ek-logo.png
     - assets/images/individual-account.png
     - assets/images/joint-account.png
@@ -86,6 +85,8 @@ flutter:
     - assets/images/individual-account-woman.jpg
     - assets/images/individual-account-woman2.jpg
     - assets/images/business-account.png
+    - assets/images/welcomebackground.png
+    - assets/images/sidianlogo.png
     - assets/fonts/
 
   # To add assets to your application, add an assets section, like this:
@@ -100,6 +101,17 @@ flutter:
   # https://flutter.dev/to/asset-from-package
 
   fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/static/Inter_18pt-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/static/Inter_18pt-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/static/Inter_18pt-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/static/Inter_18pt-Bold.ttf
+          weight: 700
+
     - family: Gilroy
       fonts:
         - asset: assets/fonts/Gilroy-Regular.ttf

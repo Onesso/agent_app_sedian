@@ -9,12 +9,29 @@ class SplashScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          // Container(
+          //   decoration: const BoxDecoration(
+          //     image: DecorationImage(
+          //       image: AssetImage('assets/images/background-img1.png'),
+          //       fit: BoxFit.cover,
+          //       alignment: Alignment(0, -0.2),
+          //     ),
+          //   ),
+          // ),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background-img.jpg'),
+                image: AssetImage('assets/images/background-img1.png'),
                 fit: BoxFit.cover,
                 alignment: Alignment(0, -0.2),
+
+                // 👈 ADD THIS: Apply a ColorFilter to darken the image
+                colorFilter: ColorFilter.mode(
+                  // Use a semi-transparent black color (adjust opacity as needed)
+                  Colors.black.withOpacity(0.4),
+                  // Use BlendMode.darken, BlendMode.srcOver, or BlendMode.overlay
+                  BlendMode.darken,
+                ),
               ),
             ),
           ),
@@ -29,7 +46,7 @@ class SplashScreen extends StatelessWidget {
                 const SizedBox(height: 40),
 
                 Image.asset(
-                  'assets/images/ek-logo.png',
+                  'assets/images/sidianlogo.png',
                   height: 70,
                   fit: BoxFit.contain,
                 ),
@@ -37,15 +54,15 @@ class SplashScreen extends StatelessWidget {
 
                 // Welcome title
                 Text(
-                  "Welcome to\nEcobank's Digital\nAccount Opening",
+                  "Welcome to\nSedian's Digital\nAccount Opening",
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontSize: 28,
-                    fontFamily: 'Gilroy',
-                    height: 1.3,
-                    letterSpacing: 0.2,
-                    color: AppTheme.white,
-                    fontWeight: FontWeight.w900,
-                  ),
+                        fontSize: 28,
+                        fontFamily: 'Gilroy',
+                        height: 1.3,
+                        letterSpacing: 0.2,
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.w900,
+                      ),
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 16),
@@ -53,16 +70,16 @@ class SplashScreen extends StatelessWidget {
                 // Description
                 Text(
                   "Open your new account online quickly,\n"
-                      "easy, anytime and anywhere with\n"
-                      "just a few steps.",
+                  "easy, anytime and anywhere with\n"
+                  "just a few steps.",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                    letterSpacing: 0.2,
-                    color: AppTheme.white.withOpacity(0.9),
-                    height: 1.5,
-                  ),
+                        fontFamily: 'Gilroy',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        letterSpacing: 0.2,
+                        color: AppTheme.white.withOpacity(0.9),
+                        height: 1.5,
+                      ),
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 40),
@@ -100,8 +117,8 @@ class SplashScreen extends StatelessWidget {
                     Text(
                       'Need Help?',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.white.withOpacity(0.8),
-                      ),
+                            color: AppTheme.white.withOpacity(0.8),
+                          ),
                     ),
                     const SizedBox(height: 8),
                     GestureDetector(
@@ -109,11 +126,11 @@ class SplashScreen extends StatelessWidget {
                         // TODO: Implement call functionality
                       },
                       child: Text(
-                        'Call Us at (+254) 709 573 000',
+                        'Call Us at (+254) 711 058 000',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+                              color: AppTheme.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                   ],

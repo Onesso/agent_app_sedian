@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       builder: (context, child) =>
           ConnectivityWatcher(child: child ?? const SizedBox()),
-      home: const SplashScreen(),
+      home: const AgentLoginScreen(),
       routes: {
         '/agent-login': (context) => const AgentLoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
@@ -41,13 +41,15 @@ class MyApp extends StatelessWidget {
         '/individual-account': (context) => const IndividualAccountScreen(),
         '/account-requirements': (context) => const AccountRequirementsScreen(),
         '/account-registration': (context) => const AccountRegistrationScreen(),
-        '/identity-verification': (context) => const IdentityVerificationScreen(),
+        '/identity-verification': (context) =>
+            const IdentityVerificationScreen(),
         '/address-details': (context) => const AddressDetailsScreen(),
         '/next-of-kin': (context) => const NextOfKinDetailsScreen(),
         '/occupation-details': (_) => const OccupationDetailsScreen(),
         '/selfie': (_) => const SelfieIntroScreen(),
         '/account-review': (_) => const AccountReviewScreen(),
-        '/otp-verification': (_) => const OtpVerificationScreen(phoneNumber: '', email: ''),
+        '/otp-verification': (_) =>
+            const OtpVerificationScreen(phoneNumber: '', email: ''),
         '/success': (_) => const SuccessScreen(),
       },
     );

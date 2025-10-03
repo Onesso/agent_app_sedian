@@ -13,10 +13,10 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Keys that let us read each field’s current errorText and revalidate on change
-  final _emailFieldKey     = GlobalKey<FormFieldState<String>>();
-  final _passwordFieldKey  = GlobalKey<FormFieldState<String>>();
+  final _emailFieldKey = GlobalKey<FormFieldState<String>>();
+  final _passwordFieldKey = GlobalKey<FormFieldState<String>>();
 
-  final _emailCtrl    = TextEditingController();
+  final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   bool _obscure = true;
 
@@ -55,7 +55,7 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
                 // Centered logo
                 Center(
                   child: Image.asset(
-                    'assets/images/Ecobank-logo.png',
+                    'assets/images/sidianlogo.png',
                     height: 64,
                     fit: BoxFit.contain,
                   ),
@@ -101,7 +101,8 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
-                  decoration: _inputDecoration(hint: 'Enter your Ecobank email address'),
+                  decoration:
+                      _inputDecoration(hint: 'Enter your Sidian email address'),
                   validator: (v) {
                     final value = v?.trim() ?? '';
                     if (value.isEmpty) return 'Email is required';
@@ -128,7 +129,8 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
                   controller: _passwordCtrl,
                   obscureText: _obscure,
                   textInputAction: TextInputAction.done,
-                  decoration: _inputDecoration(hint: 'Enter your password').copyWith(
+                  decoration:
+                      _inputDecoration(hint: 'Enter your password').copyWith(
                     suffixIcon: IconButton(
                       onPressed: () => setState(() => _obscure = !_obscure),
                       icon: Icon(
@@ -160,16 +162,18 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
                     onPressed: _canSignIn ? _signIn : null,
                     style: ButtonStyle(
                       backgroundColor:
-                      MaterialStateProperty.resolveWith<Color>((states) {
+                          MaterialStateProperty.resolveWith<Color>((states) {
                         if (states.contains(MaterialState.disabled)) {
-                          return const Color(0xFFDDE9A6); // pale lime (disabled)
+                          return const Color(
+                              0xFFDDE9A6); // pale lime (disabled)
                         }
                         return AppTheme.lightGreen; // lime (enabled)
                       }),
                       foregroundColor:
-                      MaterialStateProperty.resolveWith<Color>((states) {
+                          MaterialStateProperty.resolveWith<Color>((states) {
                         if (states.contains(MaterialState.disabled)) {
-                          return const Color(0xFF9E9E9E); // grey text (disabled)
+                          return const Color(
+                              0xFF9E9E9E); // grey text (disabled)
                         }
                         return AppTheme.darkBlueHighlight;
                       }),
@@ -223,7 +227,7 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
                 // Centered footer
                 const Center(
                   child: Text(
-                    'Ecobank • v1.0',
+                    'Sidian • v1.0',
                     style: TextStyle(
                       fontFamily: 'Gilroy',
                       fontWeight: FontWeight.w500,
@@ -242,30 +246,31 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
 
   // Input decoration with hidden default error line (no reserved space)
   InputDecoration _inputDecoration({required String hint}) => InputDecoration(
-    hintText: hint,
-    isDense: true,
-    filled: true,
-    fillColor: AppTheme.white,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppTheme.textFieldOutline),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppTheme.textFieldOutline),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppTheme.lightBlue, width: 1.5),
-    ),
-    // Make Flutter's default error line take ZERO space
-    errorStyle: const TextStyle(
-      height: 0,
-      fontSize: 0,
-      color: Colors.transparent,
-    ),
-  );
+        hintText: hint,
+        isDense: true,
+        filled: true,
+        fillColor: AppTheme.white,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.textFieldOutline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.textFieldOutline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.lightBlue, width: 1.5),
+        ),
+        // Make Flutter's default error line take ZERO space
+        errorStyle: const TextStyle(
+          height: 0,
+          fontSize: 0,
+          color: Colors.transparent,
+        ),
+      );
 
   void _signIn() {
     if (!(_formKey.currentState?.validate() ?? false)) {
@@ -319,27 +324,28 @@ class _ErrorArea extends StatelessWidget {
       child: (message == null)
           ? const SizedBox(height: 22, key: ValueKey('empty'))
           : SizedBox(
-        key: const ValueKey('error'),
-        height: 22,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(Icons.info_outline, size: 16, color: AppTheme.alertError),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                message!,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontFamily: 'Gilroy',
-                  fontSize: 13,
-                  color: AppTheme.alertError,
-                ),
+              key: const ValueKey('error'),
+              height: 22,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(Icons.info_outline,
+                      size: 16, color: AppTheme.alertError),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      message!,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: 'Gilroy',
+                        fontSize: 13,
+                        color: AppTheme.alertError,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }
