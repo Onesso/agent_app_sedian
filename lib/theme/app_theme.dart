@@ -1,69 +1,47 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Primary Colors
-  static const Color lightBlue = Color(0xFF0082BB);
-  static const Color darkBlueHighlight = Color(0xFF023448);
+  // Brand Colors
+  static const Color primary = Color(0xFF1B2032);   // Sidian Navy
+  static const Color secondary = Color(0xFFF6E71D); // Sidian Yellow
+  static const Color olive = Color(0xFF7A7A18); // Sidian Olive
 
-  // Secondary Colors
-  static const Color lightGreen = Color(0xFFBED600);
-  static const Color mobileAppGreen = Color(0xFF59C391);
-
-  // Neutral Colors
-  static const Color darkGray = Color(0xFF4E4E4E);
-  static const Color darkGrayT = Color(0xFF717171);
-  static const Color midGray = Color(0xFF979797);
-  static const Color lightGray = Color(0xFFEDEDED);
-  static const Color lightGrayT2 = Color(0xFFF6F6F6);
-  static const Color lightGrayT1 = Color(0xFFFBFBFB);
-  static const Color white = Color(0xFFFFFFFF);
+  // Supporting Colors
+  static const Color dark = Color(0xFF222428);
+  static const Color lightBackground = Color(0xFFF4F5F8);
+  static const Color medium = Color(0xFFEDEDED);
 
   // Alert Colors
-  static const Color errorRed = Color(0xFFB3261E);
   static const Color successGreen = Color(0xFF3C8930);
-  static const Color infoBlue = Color(0xFF005B82);
-  static const Color warningYellow = Color(0xFFFFC43D);
+  static const Color warningYellow = Color(0xFFFFC409);
+  static const Color errorRed = Color(0xFFEB445A);
+  static const Color infoBlue = Color(0xFF5260FF);
 
-  //Brand Alert Palette
-  static const Color alertError    = Color(0xFFB3261E); // MobileApp Error Red
-  static const Color alertSuccess  = Color(0xFF3C8930); // Ecobank Dark Green
-  static const Color alertInfo     = Color(0xFF005B82); // Ecobank Dark Blue
-  static const Color alertWarning  = Color(0xFFFFC43D); // MobileApp Yellow
-
-// Text contrast helpers
-  static const Color alertOnDark   = Colors.white;
-  static const Color alertOnLight  = Color(0xFF1F2937); // for yellow banner text
-
-
-  // Font Colors
-  static const Color textTitleBody = darkGray; // #4E4E4E
-  static const Color textLinksLabels = lightBlue; // #0082BB
-  static const Color textFieldOutline = midGray; // #979797
-
-  // Icon Colors
-  static const Color iconGreen = mobileAppGreen; // #59C391
-  static const Color iconWhite = white; // #FFFFFF
+  // Text Colors
+  static const Color textPrimary = dark;
+  static const Color textSecondary = Color(0xFF4E4E4E);
+  static const Color textLink = primary;
 
   // Button Colors
-  static const Color primaryButton = lightGreen; // #BED600
-  static const Color secondaryButton = lightBlue; // #0082BB
-  static Color primaryButtonPressed = primaryButton.withOpacity(0.6); // 60% fill
-  static Color secondaryButtonPressed = secondaryButton.withOpacity(0.6); // 60% fill
+  static const Color primaryButton = primary;
+  static const Color secondaryButton = secondary;
 
-  // Light Theme
+  static Color primaryButtonPressed = primary.withOpacity(0.7);
+  static Color secondaryButtonPressed = secondary.withOpacity(0.8);
+
+  // Theme definition
   static ThemeData light() {
-    final base = ThemeData.light().copyWith(
-      scaffoldBackgroundColor: white,
-    );
+    final base = ThemeData.light();
 
     return base.copyWith(
+      scaffoldBackgroundColor: lightBackground,
       colorScheme: base.colorScheme.copyWith(
-        primary: lightBlue,
-        secondary: lightGreen,
-        background: white,
+        primary: primary,
+        secondary: secondary,
+        background: lightBackground,
         error: errorRed,
-        onPrimary: white, // Text color on primary buttons
-        onSecondary: white, // Text color on secondary buttons
+        onPrimary: Colors.white,
+        onSecondary: dark,
       ),
       textTheme: _buildTextTheme(base.textTheme),
       elevatedButtonTheme: _elevatedButtonTheme(),
@@ -74,227 +52,123 @@ class AppTheme {
     );
   }
 
-  // Text Theme based on Gilroy font
   static TextTheme _buildTextTheme(TextTheme base) {
     return base.copyWith(
-      // Headlines
-      displaySmall: base.displaySmall!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.w600,
-        fontSize: 22.0,
-        height: 28.0 / 22.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
+      displayLarge: base.displayLarge?.copyWith(
+        fontFamily: 'Calibri',
+        fontWeight: FontWeight.bold,
+        fontSize: 52,
+        color: textPrimary,
       ),
       displayMedium: base.displayMedium?.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.w600, // SemiBold
-        fontSize: 45.0,
-        height: 52.0 / 45.0, // line height ratio
-        letterSpacing: 0.0,
-        color: textTitleBody,
-      ) ??
-          const TextStyle(
-            fontFamily: 'Gilroy',
-            fontWeight: FontWeight.w600,
-            fontSize: 45.0,
-            height: 52.0 / 45.0,
-            letterSpacing: 0.0,
-            color: textTitleBody,
-          ),
-      displayLarge: base.displayLarge?.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.w600, // SemiBold
-        fontSize: 52.0,
-        height: 62.0 / 52.0, // line height ratio
-        letterSpacing: 0.0,
-        color: textTitleBody,
-      ) ??
-          const TextStyle(
-            fontFamily: 'Gilroy',
-            fontWeight: FontWeight.w600,
-            fontSize: 45.0,
-            height: 52.0 / 45.0,
-            letterSpacing: 0.0,
-            color: textTitleBody,
-          ),
-      headlineMedium: base.headlineMedium!.copyWith(
-        fontFamily: 'Gilroy',
+        fontFamily: 'Calibri',
+        fontWeight: FontWeight.bold,
+        fontSize: 36,
+        color: textPrimary,
+      ),
+      headlineSmall: base.headlineSmall?.copyWith(
+        fontFamily: 'Calibri',
         fontWeight: FontWeight.w600,
-        fontSize: 16.0,
-        height: 24.0 / 16.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
+        fontSize: 16,
+        color: textPrimary,
       ),
-      headlineSmall: base.headlineSmall!.copyWith(
-        fontFamily: 'Gilroy',
+      bodyLarge: base.bodyLarge?.copyWith(
+        fontFamily: 'Calibri',
+        fontWeight: FontWeight.normal,
+        fontSize: 14,
+        color: textSecondary,
+      ),
+      bodyMedium: base.bodyMedium?.copyWith(
+        fontFamily: 'Calibri',
+        fontWeight: FontWeight.normal,
+        fontSize: 13,
+        color: textSecondary,
+      ),
+      labelLarge: base.labelLarge?.copyWith(
+        fontFamily: 'Calibri',
         fontWeight: FontWeight.w600,
-        fontSize: 14.0,
-        height: 20.0 / 14.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
+        fontSize: 14,
+        color: textPrimary,
       ),
-      titleSmall: base.titleSmall!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.w600,
-        fontSize: 12.0,
-        height: 18.0 / 12.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
-      ),
-      // Labels
-      bodyLarge: base.bodyLarge!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.normal,
-        fontSize: 14.0,
-        height: 20.0 / 14.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
-      ),
-      bodyMedium: base.bodyMedium!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.normal,
-        fontSize: 12.0,
-        height: 18.0 / 12.0,
-        letterSpacing: 0.5,
-        color: textTitleBody,
-      ),
-      // Body Text
-      titleMedium: base.titleMedium!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.normal,
-        fontSize: 16.0,
-        height: 24.0 / 16.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
-      ),
-      titleLarge: base.titleLarge!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.normal,
-        fontSize: 14.0,
-        height: 20.0 / 14.0,
-        letterSpacing: 0.2,
-        color: textTitleBody,
-      ),
-      labelSmall: base.labelSmall!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.normal,
-        fontSize: 12.0,
-        height: 18.0 / 12.0,
-        letterSpacing: 0.5,
-        color: textTitleBody,
-      ),
-      // Captions
-      bodySmall: base.bodySmall!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.normal,
-        fontSize: 11.0,
-        height: 16.0 / 11.0,
-        letterSpacing: 0.5,
-        color: textTitleBody,
-      ),
-      labelLarge: base.labelLarge!.copyWith(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.w600,
-        fontSize: 11.0,
-        height: 16.0 / 11.0,
-        letterSpacing: 0.5,
-        color: textTitleBody,
-      ),
-
     );
   }
 
-  // Primary Button (Light Green)
   static ElevatedButtonThemeData _elevatedButtonTheme() {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryButton,
         foregroundColor: Colors.white,
-        minimumSize: const Size(328, 40), // Width: 328, Height: 40
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Padding
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), // Radius: 8px
+        minimumSize: const Size(328, 44),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         textStyle: const TextStyle(
-          fontFamily: 'Gilroy',
+          fontFamily: 'Calibri',
           fontWeight: FontWeight.w600,
           fontSize: 14,
-          letterSpacing: 0.2,
         ),
       ),
     );
   }
 
-  // Secondary Button (Light Blue)
   static OutlinedButtonThemeData _outlinedButtonTheme() {
     return OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         backgroundColor: secondaryButton,
-        foregroundColor: Colors.white,
-        minimumSize: const Size(328, 40),
-        side: BorderSide.none, // Remove default outline
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        foregroundColor: dark,
+        minimumSize: const Size(328, 44),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         textStyle: const TextStyle(
-          fontFamily: 'Gilroy',
+          fontFamily: 'Calibri',
           fontWeight: FontWeight.w600,
           fontSize: 14,
-          letterSpacing: 0.2,
         ),
       ),
     );
   }
 
-  // Text Link Buttons
   static TextButtonThemeData _textButtonTheme() {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: textLinksLabels,
+        foregroundColor: textLink,
         textStyle: const TextStyle(
-          fontFamily: 'Gilroy',
+          fontFamily: 'Calibri',
           fontWeight: FontWeight.w600,
           fontSize: 12,
-          letterSpacing: 0.2,
           decoration: TextDecoration.underline,
         ),
       ),
     );
   }
 
-  // Input Fields
   static InputDecorationTheme _inputDecorationTheme() {
     return InputDecorationTheme(
       filled: true,
-      fillColor: lightGrayT1, // #FBFBFB
+      fillColor: Colors.white,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: const BorderSide(color: textFieldOutline, width: 1.0), // #979797
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: medium, width: 1.0),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: const BorderSide(color: lightBlue, width: 1.5), // Focus to Light Blue
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: primary, width: 1.5),
       ),
-      contentPadding: const EdgeInsets.all(16.0),
-      hintStyle: TextStyle(color: midGray, fontFamily: 'Gilroy'),
-      labelStyle: TextStyle(color: darkGrayT, fontFamily: 'Gilroy'),
+      labelStyle: const TextStyle(color: dark, fontFamily: 'Calibri'),
+      hintStyle: const TextStyle(color: Colors.grey, fontFamily: 'Calibri'),
+      contentPadding: const EdgeInsets.all(16),
     );
   }
 
-  // App Bar
   static AppBarTheme _appBarTheme() {
     return const AppBarTheme(
-      backgroundColor: white,
-      foregroundColor: darkGray, // Color of the title
+      backgroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
-      iconTheme: IconThemeData(color: lightBlue, size: 24), // Back button color
       titleTextStyle: TextStyle(
-        fontFamily: 'Gilroy',
+        fontFamily: 'Calibri',
         fontWeight: FontWeight.w600,
-        fontSize: 16,
-        letterSpacing: 0.2,
-        color: darkGray, // #4E4E4E
+        fontSize: 18,
+        color: dark,
       ),
+      iconTheme: IconThemeData(color: primary, size: 24),
     );
   }
 }

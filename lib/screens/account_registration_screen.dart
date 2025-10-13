@@ -1,36 +1,39 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import 'package:phone_form_field/phone_form_field.dart';
+import '../theme/app_theme.dart';
 import '../models/onboarding_data.dart';
+import '../utils/alert_utils.dart';
 
 class AccountRegistrationScreen extends StatefulWidget {
   const AccountRegistrationScreen({super.key});
 
   @override
-  State<AccountRegistrationScreen> createState() => _AccountRegistrationScreenState();
+  State<AccountRegistrationScreen> createState() =>
+      _AccountRegistrationScreenState();
 }
 
 class _AccountRegistrationScreenState extends State<AccountRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailKey = GlobalKey<FormFieldState<String>>();
+  final _phoneKey = GlobalKey<FormFieldState<PhoneNumber>>();
 
-  // Keys so we can read current errorText and revalidate on change
-  final _emailFieldKey = GlobalKey<FormFieldState<String>>();
-  final _phoneFieldKey = GlobalKey<FormFieldState<PhoneNumber>>();
+  final _emailController = TextEditingController();
+  PhoneNumber? _phone;
+  String _phoneE164 = '';
+  bool _saving = false;
 
-  final _email = TextEditingController();
-
-  PhoneNumber? _phone;      // parsed phone
-  String _phoneE164 = '';   // +2547xxxxxxxx
+  static const Color sidianNavy = Color(0xFF0B2240);
+  static const Color sidianOlive = Color(0xFF7A7A18);
 
   @override
   void dispose() {
-    _email.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
   bool get _canSubmit {
-    // quick, lightweight check (form will still validate on press)
-    final emailOk = RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(_email.text.trim());
+    final emailOk =
+    RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(_emailController.text.trim());
     final phoneOk = _phoneE164.isNotEmpty;
     return emailOk && phoneOk;
   }
@@ -38,136 +41,86 @@ class _AccountRegistrationScreenState extends State<AccountRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: AppTheme.lightBackground,
       appBar: AppBar(
-        backgroundColor: AppTheme.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.lightBlue),
+          icon: const Icon(Icons.arrow_back, color: sidianNavy),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Image.asset(
-              'assets/images/Ecobank-logo.png',
-              height: 24,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Progress bar — navy blue
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(3),
-                  child: LinearProgressIndicator(
+                  borderRadius: BorderRadius.circular(2),
+                  child: const LinearProgressIndicator(
                     minHeight: 4,
-                    value: 0.20,
-                    color: AppTheme.lightGreen,
-                    backgroundColor: const Color(0xFFEAEFBE),
+                    value: 0.15,
+                    color: sidianNavy,
+                    backgroundColor: Color(0xFFEDEDED),
                   ),
                 ),
-                const SizedBox(height: 44),
+                const SizedBox(height: 36),
 
-                const Text(
-                  'Account Registration',
-                  style: TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22,
-                    height: 1.2,
-                    color: AppTheme.darkGray,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                Text.rich(
-                  const TextSpan(
+                // Intro text
+                RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontFamily: 'Calibri',
+                      fontSize: 20,
+                      height: 1.5,
+                      color: AppTheme.textPrimary,
+                    ),
                     children: [
                       TextSpan(
-                        text: 'We need to secure customer\'s Account. Provide their ',
+                        text:
+                        "Let's begin the process by verifying customer\'s ",
                         style: TextStyle(
-                          fontFamily: 'Gilroy',
+                          color: AppTheme.textPrimary,
                           fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          height: 1.5,
-                          color: AppTheme.darkGray,
                         ),
                       ),
                       TextSpan(
-                        text: 'Email Address',
+                        text: "Phone Number ",
                         style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          height: 1.5,
-                          color: AppTheme.darkGray,
+                          color: sidianOlive,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       TextSpan(
-                        text: ' & ',
-                        style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          height: 1.5,
-                          color: AppTheme.darkGray,
-                        ),
+                        text: "& ",
+                        style: TextStyle(color: AppTheme.textPrimary),
                       ),
                       TextSpan(
-                        text: 'Phone Number',
+                        text: "Email Address",
                         style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          height: 1.5,
-                          color: AppTheme.darkGray,
+                          color: sidianOlive,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 28),
+                const SizedBox(height: 40),
 
-                const _FieldLabel('Email Address'),
-                const SizedBox(height: 8),
-                TextFormField(
-                  key: _emailFieldKey,
-                  controller: _email,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: _fieldDecoration(hint: ''),
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return 'Email is required';
-                    final ok = RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(value);
-                    if (!ok) return 'Enter a valid email';
-                    return null;
-                  },
-                  onChanged: (_) {
-                    _emailFieldKey.currentState?.validate(); // clear error as user fixes it
-                    setState(() {});
-                  },
-                ),
-                _ErrorArea(message: _emailFieldKey.currentState?.errorText),
-
-                const SizedBox(height: 8),
-
+                // Phone Number
                 const _FieldLabel('Phone Number'),
                 const SizedBox(height: 8),
-
                 PhoneFormField(
-                  key: _phoneFieldKey,
+                  key: _phoneKey,
                   initialValue: const PhoneNumber(isoCode: IsoCode.KE, nsn: ''),
-                  countrySelectorNavigator: const CountrySelectorNavigator.bottomSheet(),
+                  countrySelectorNavigator:
+                  const CountrySelectorNavigator.bottomSheet(),
                   isCountrySelectionEnabled: true,
                   isCountryButtonPersistent: true,
                   countryButtonStyle: const CountryButtonStyle(
@@ -176,42 +129,107 @@ class _AccountRegistrationScreenState extends State<AccountRegistrationScreen> {
                     showDialCode: false,
                     flagSize: 18,
                   ),
-                  decoration: _phoneDecoration(),
+                  decoration: _inputDecoration(hint: '0712 345 678'),
                   validator: PhoneValidator.compose([
                     PhoneValidator.required(context),
                     PhoneValidator.validMobile(context),
                   ]),
                   onChanged: (phone) {
                     _phone = phone;
-                    _phoneE164 = (phone == null) ? '' : '+${phone.countryCode}${phone.nsn}';
-                    _phoneFieldKey.currentState?.validate(); // clear error as user fixes it
+                    _phoneE164 =
+                    (phone == null) ? '' : '+${phone.countryCode}${phone.nsn}';
+                    _phoneKey.currentState?.validate();
                     setState(() {});
                   },
-                  textInputAction: TextInputAction.done,
                 ),
-                _ErrorArea(message: _phoneFieldKey.currentState?.errorText),
+                _ErrorArea(message: _phoneKey.currentState?.errorText),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
+                // Email Address
+                const _FieldLabel('Email Address'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  key: _emailKey,
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: _inputDecoration(hint: 'example@domain.com'),
+                  validator: (v) {
+                    final value = v?.trim() ?? '';
+                    if (value.isEmpty) return 'Email is required';
+                    final ok =
+                    RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(value);
+                    if (!ok) return 'Enter a valid email';
+                    return null;
+                  },
+                  onChanged: (_) {
+                    _emailKey.currentState?.validate();
+                    setState(() {});
+                  },
+                ),
+                _ErrorArea(message: _emailKey.currentState?.errorText),
+
+                const SizedBox(height: 40),
+
+                // Continue Button with animation
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
+                  height: 54,
                   child: ElevatedButton(
-                    onPressed: _canSubmit ? _submit : null,
+                    onPressed:
+                    (_canSubmit && !_saving) ? _submit : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.lightGreen,
-                      foregroundColor: AppTheme.darkBlueHighlight,
-                      elevation: 0,
+                      backgroundColor:
+                      _canSubmit ? sidianNavy : sidianNavy.withOpacity(0.3),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(28),
                       ),
+                      elevation: 0,
                       textStyle: const TextStyle(
-                        fontFamily: 'Gilroy',
+                        fontFamily: 'Calibri',
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
                     ),
-                    child: const Text('Submit'),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: _saving
+                          ? Row(
+                        key: const ValueKey('saving'),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            'Saving...',
+                            style: TextStyle(
+                              fontFamily: 'Calibri',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      )
+                          : const Text(
+                        'Continue',
+                        key: ValueKey('normal'),
+                        style: TextStyle(
+                          fontFamily: 'Calibri',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -222,86 +240,94 @@ class _AccountRegistrationScreenState extends State<AccountRegistrationScreen> {
     );
   }
 
-  // Common text field decoration (hide Flutter default error line)
-  InputDecoration _fieldDecoration({required String hint}) {
+  InputDecoration _inputDecoration({required String hint}) {
     return InputDecoration(
       hintText: hint,
+      hintStyle: const TextStyle(
+        fontFamily: 'Calibri',
+        color: Colors.grey,
+        fontSize: 15,
+      ),
       filled: true,
-      fillColor: AppTheme.white,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      fillColor: Colors.white,
+      contentPadding:
+      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppTheme.textFieldOutline),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFD6D6D6)),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppTheme.textFieldOutline),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFD6D6D6)),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppTheme.lightBlue, width: 1.5),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: Color(0xFFD6D6D6),
+          width: 1.4,
+        ),
       ),
-      // suppress default error line so our custom one is the only thing visible
-      errorStyle: const TextStyle(height: 0, fontSize: 0, color: Colors.transparent),
+      errorStyle:
+      const TextStyle(height: 0, fontSize: 0, color: Colors.transparent),
     );
   }
 
-  // PhoneFormField decoration with hidden default error line too
-  InputDecoration _phoneDecoration() => InputDecoration(
-    hintText: '0700 000 000',
-    isDense: true,
-    filled: true,
-    fillColor: AppTheme.white,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppTheme.textFieldOutline),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppTheme.textFieldOutline),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppTheme.lightBlue, width: 1.5),
-    ),
-    errorStyle: const TextStyle(height: 0, fontSize: 0, color: Colors.transparent),
-  );
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      showSidianAlert(
+        context,
+        message: 'Please fill all required fields correctly.',
+        type: AlertType.error,
+      );
+      return;
+    }
 
-  void _submit() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    OnboardingData.I.email     = _email.text.trim();
+    setState(() => _saving = true);
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    OnboardingData.I.email = _emailController.text.trim();
     OnboardingData.I.phoneE164 = _phoneE164;
-    Navigator.pushNamed(context, '/identity-verification');
+
+    showSidianAlert(
+      context,
+      message: 'Details saved successfully!',
+      type: AlertType.success,
+    );
+
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
+      Navigator.pushNamed(context, '/identity-verification');
+    }
+
+    setState(() => _saving = false);
   }
 }
 
+/* ------------------ Field Label ------------------ */
 class _FieldLabel extends StatelessWidget {
   final String text;
   const _FieldLabel(this.text);
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(
+          fontFamily: 'Calibri',
+          fontSize: 15,
+          color: AppTheme.textPrimary,
+        ),
         children: [
           TextSpan(
             text: text,
-            style: const TextStyle(
-              fontFamily: 'Gilroy',
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: AppTheme.darkGray,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           const TextSpan(
             text: ' *',
             style: TextStyle(
-              fontFamily: 'Gilroy',
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: AppTheme.errorRed,
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -310,7 +336,7 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-/// Fixed-height error slot with red info icon
+/* ------------------ Error Display ------------------ */
 class _ErrorArea extends StatelessWidget {
   final String? message;
   const _ErrorArea({this.message});
@@ -318,25 +344,24 @@ class _ErrorArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 120),
+      duration: const Duration(milliseconds: 150),
       child: (message == null)
-          ? const SizedBox(height: 22, key: ValueKey('empty'))
+          ? const SizedBox(height: 20)
           : SizedBox(
-        key: const ValueKey('error'),
-        height: 22,
+        height: 20,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.info_outline, size: 16, color: AppTheme.alertError),
+            const Icon(Icons.info_outline,
+                size: 15, color: Colors.redAccent),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 message!,
-                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontFamily: 'Gilroy',
+                  fontFamily: 'Calibri',
                   fontSize: 13,
-                  color: AppTheme.alertError,
+                  color: Colors.redAccent,
                 ),
               ),
             ),

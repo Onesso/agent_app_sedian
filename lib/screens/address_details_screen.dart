@@ -15,15 +15,33 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
   String? _selectedCountry;
   final _areaController = TextEditingController();
   final _buildingController = TextEditingController();
+  bool _saving = false;
 
-  // Sample data
+  static const Color sidianOlive = Color(0xFF7A7A18);
+  static const Color sidianNavy = Color(0xFF0B2240);
+
   final List<String> _branches = const [
-    'Nairobi CBD Branch',
-    'Westlands Branch',
-    'Karen Branch',
-    'Eastleigh Branch',
-    'Kisumu Branch',
-    'Mombasa Branch',
+    'BOMET',
+    'BUNGOMA',
+    'BURUBURU',
+    'BUSIA',
+    'CHUKA',
+    'ELDORET',
+    'EMALI',
+    'EMBU',
+    'GIKOMBA',
+    'ISIOLO',
+    'KAJIADO',
+    'KAKAMEGA',
+    'KAMAKIS',
+    'KANGEMI',
+    'KAREN',
+    'KENGELENI',
+    'KENYATTA AVENUE',
+    'KENYATTA MARKET',
+    'KERICHO',
+    'MOI AVENUE',
+    'MOMBASA',
   ];
 
   final List<String> _countries = const [
@@ -53,29 +71,26 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
     super.dispose();
   }
 
+  bool _canSubmit() {
+    return _selectedBranch != null &&
+        _selectedCountry != null &&
+        _areaController.text.trim().isNotEmpty &&
+        _buildingController.text.trim().isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     final canSubmit = _canSubmit();
 
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppTheme.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.lightBlue),
+          icon: Icon(Icons.arrow_back, color: sidianNavy),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Image.asset(
-              'assets/images/Ecobank-logo.png',
-              height: 24,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -86,52 +101,45 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Progress
+                    // progress bar
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
+                      borderRadius: BorderRadius.circular(2),
                       child: LinearProgressIndicator(
                         minHeight: 4,
-                        value: 0.60,
-                        color: AppTheme.lightGreen,
-                        backgroundColor: const Color(0xFFEAEFBE),
+                        value: 0.6,
+                        color: sidianNavy,
+                        backgroundColor: const Color(0xFFEDEDED),
                       ),
                     ),
-                    const SizedBox(height: 44),
+                    const SizedBox(height: 40),
 
-                    const Text(
-                      'Address Details',
-                      style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 22,
-                        height: 1.2,
-                        color: AppTheme.darkGray,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
+                    // heading
                     RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          height: 1.5,
-                          color: AppTheme.darkGray,
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontFamily: 'Calibri',
+                          fontSize: 20,
+                          color: AppTheme.textPrimary,
+                          height: 1.4,
                         ),
                         children: [
-                          TextSpan(text: 'Now add customer\'s '),
+                          const TextSpan(
+                            text: "Let's add the customer's ",
+                            style: TextStyle(fontWeight: FontWeight.w400),
+                          ),
                           TextSpan(
-                            text: 'Address details',
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                            text: 'Address Details',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: sidianOlive,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 36),
 
-                    // Preferred branch (modal picker)
-                    const _RequiredLabel('Preferred branch'),
+                    const _RequiredLabel('Preferred Branch'),
                     const SizedBox(height: 8),
                     _PickerBox(
                       valueText: _selectedBranch ?? '--Select--',
@@ -139,25 +147,21 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                       onTap: () async {
                         final result = await showModalBottomSheet<String>(
                           context: context,
-                          isScrollControlled: true,
                           backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
                           builder: (_) => _SingleSelectPickerSheet(
                             title: 'Preferred Branch *',
                             items: _branches,
                             selectedValue: _selectedBranch,
+                            navyColor: sidianNavy,
                           ),
                         );
-                        if (result != null) {
-                          setState(() {
-                            _selectedBranch = result;
-                          });
-                        }
+                        if (result != null) setState(() => _selectedBranch = result);
                       },
                     ),
                     const SizedBox(height: 24),
 
-                    // Country of residence (modal picker)
-                    const _RequiredLabel('Country of residence'),
+                    const _RequiredLabel('Country of Residence'),
                     const SizedBox(height: 8),
                     _PickerBox(
                       valueText: _selectedCountry ?? '--Select--',
@@ -165,106 +169,130 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                       onTap: () async {
                         final result = await showModalBottomSheet<String>(
                           context: context,
-                          isScrollControlled: true,
                           backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
                           builder: (_) => _SingleSelectPickerSheet(
                             title: 'Country of Residence *',
                             items: _countries,
                             selectedValue: _selectedCountry,
+                            navyColor: sidianNavy,
                           ),
                         );
-                        if (result != null) {
-                          setState(() {
-                            _selectedCountry = result;
-                          });
-                        }
+                        if (result != null) setState(() => _selectedCountry = result);
                       },
                     ),
                     const SizedBox(height: 24),
 
-                    // Area of residence
-                    const _RequiredLabel('Area of residence'),
+                    const _RequiredLabel('Area of Residence'),
                     const SizedBox(height: 8),
-                    _TextBox(
-                      controller: _areaController,
-                      hint: 'e.g Nairobi',
-                    ),
+                    _TextBox(controller: _areaController, hint: 'e.g. Nairobi'),
                     const SizedBox(height: 24),
 
-                    // Building
                     const _RequiredLabel('Building'),
                     const SizedBox(height: 8),
-                    _TextBox(
-                      controller: _buildingController,
-                      hint: 'e.g. ABC Apartments',
-                    ),
+                    _TextBox(controller: _buildingController, hint: 'e.g. ABC Apartments'),
                   ],
                 ),
               ),
             ),
 
-            // Submit
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               child: SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 54,
                 child: ElevatedButton(
-                  onPressed: canSubmit ? _submit : null,
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                      if (states.contains(MaterialState.disabled)) {
-                        return const Color(0xFFDDE9A6); // pale green (disabled)
-                      }
-                      return AppTheme.lightGreen; // bright green (enabled)
-                    }),
-                    foregroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                      if (states.contains(MaterialState.disabled)) {
-                        return const Color(0xFF9E9E9E); // grey text (disabled)
-                      }
-                      return AppTheme.darkBlueHighlight; // normal
-                    }),
-                    elevation: const MaterialStatePropertyAll(0),
-                    shape: MaterialStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  onPressed: canSubmit && !_saving
+                      ? () async {
+                    setState(() => _saving = true);
+
+                    // Simulate save process
+                    await Future.delayed(const Duration(seconds: 2));
+
+                    if (!mounted) return;
+                    setState(() => _saving = false);
+
+                    showSidianAlert(
+                      context,
+                      message: 'Address details saved successfully',
+                      type: AlertType.success,
+                    );
+
+                    await Future.delayed(const Duration(seconds: 2));
+
+                    if (mounted) {
+                      _showAddOnsSheet();
+                    }
+                  }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: canSubmit ? sidianNavy : Colors.grey[300],
+                    foregroundColor: canSubmit ? Colors.white : Colors.grey[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
                     ),
-                    textStyle: const MaterialStatePropertyAll(TextStyle(
-                      fontFamily: 'Gilroy',
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    textStyle: const TextStyle(
+                      fontFamily: 'Calibri',
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
-                    )),
+                    ),
                   ),
-                  child: const Text('Submit'),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: _saving
+                        ? Row(
+                      key: const ValueKey('saving'),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Text(
+                          'Saving...',
+                          style: TextStyle(
+                            fontFamily: 'Calibri',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                      ],
+                    )
+                        : const Text(
+                      'Continue',
+                      key: ValueKey('normal'),
+                      style: TextStyle(
+                        fontFamily: 'Calibri',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
+
           ],
         ),
       ),
     );
   }
 
-  bool _canSubmit() {
-    return _selectedBranch != null &&
-        _selectedCountry != null &&
-        _areaController.text.trim().isNotEmpty &&
-        _buildingController.text.trim().isNotEmpty;
-  }
-
-  void _submit() {
-    _showAddOnsSheet();
-  }
-
   void _showAddOnsSheet() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: false,
       backgroundColor: Colors.white,
-      barrierColor: Colors.black54,
+      barrierColor: Colors.black38,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -275,20 +303,19 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
             return SafeArea(
               top: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // green handle
                     Container(
-                      width: 68,
-                      height: 8,
+                      width: 60,
+                      height: 6,
                       decoration: BoxDecoration(
-                        color: AppTheme.lightGreen,
+                        color: sidianNavy.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
 
                     const _GreyTile(
                       title: 'Mobile Banking',
@@ -304,34 +331,28 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                       trailing: Switch.adaptive(
                         value: debitCard,
                         onChanged: (v) => setSheetState(() => debitCard = v),
-                        activeColor: AppTheme.lightBlue,
-                        activeTrackColor: AppTheme.lightBlue.withOpacity(0.25),
+                        activeColor: sidianNavy,
+                        activeTrackColor: sidianNavy.withOpacity(0.25),
                       ),
                     ),
                     const SizedBox(height: 20),
 
                     SizedBox(
                       width: double.infinity,
-                      height: 48,
+                      height: 54,
                       child: ElevatedButton(
                         onPressed: _showConfirmDialog,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.lightGreen,
-                          foregroundColor: AppTheme.darkBlueHighlight,
-                          elevation: 0,
+                          backgroundColor: sidianNavy,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(28),
                           ),
-                          textStyle: const TextStyle(
-                            fontFamily: 'Gilroy',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
+                          elevation: 0,
                         ),
                         child: const Text('Continue'),
                       ),
                     ),
-                    const SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -342,107 +363,81 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
     );
   }
 
-  /// CONFIRM dialog
   void _showConfirmDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (ctx) {
         return Dialog(
-          backgroundColor: Colors.white,
-          insetPadding:
-          const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // content
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-                child: Column(
-                  children: const [
-                    Text(
-                      'CONFIRM',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                        color: AppTheme.darkGray,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Kindly ensure that your account is funded with a minimum of Kes 600 to facilitate your debit card ordering.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        height: 1.5,
-                        color: AppTheme.darkGray,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    _NoteParagraph(),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'CONFIRM',
+                  style: TextStyle(
+                    fontFamily: 'Calibri',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                    color: AppTheme.textPrimary,
+                  ),
                 ),
-              ),
-              const Divider(height: 1, color: Color(0xFFE5E7EB)),
-              // actions row
-              SizedBox(
-                height: 52,
-                child: Row(
+                const SizedBox(height: 12),
+                const Text(
+                  'Kindly ensure that the account is funded with a minimum of Kes 600 to facilitate the debit card ordering.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Calibri',
+                    fontSize: 16,
+                    color: AppTheme.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const _NoteParagraph(),
+                const Divider(height: 24),
+                Row(
                   children: [
                     Expanded(
-                      child: InkWell(
-                        onTap: () => Navigator.pop(ctx),
-                        child: const Center(
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              fontFamily: 'Gilroy',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: AppTheme.darkGray,
-                            ),
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontFamily: 'Calibri',
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey,
                           ),
                         ),
                       ),
                     ),
-                    Container(width: 1, color: const Color(0xFFE5E7EB)),
                     Expanded(
-                      child: InkWell(
-                        onTap: () {
+                      child: TextButton(
+                        onPressed: () {
                           OnboardingData.I.preferredBranch = _selectedBranch;
                           OnboardingData.I.country = _selectedCountry;
-                          OnboardingData.I.area =
-                              _areaController.text.trim();
+                          OnboardingData.I.area = _areaController.text.trim();
                           OnboardingData.I.building =
                               _buildingController.text.trim();
 
-                          Navigator.pop(ctx); // close dialog
+                          Navigator.pop(ctx);
                           Navigator.pushNamed(context, '/next-of-kin');
                         },
-                        child: const Center(
-                          child: Text(
-                            'Confirm',
-                            style: TextStyle(
-                              fontFamily: 'Gilroy',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: AppTheme.lightBlue,
-                            ),
+                        child: Text(
+                          'Confirm',
+                          style: TextStyle(
+                            fontFamily: 'Calibri',
+                            fontWeight: FontWeight.w600,
+                            color: sidianNavy,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -450,7 +445,7 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
   }
 }
 
-//helpers (styled widgets)
+/* ------------------ Helper Widgets ------------------ */
 
 class _RequiredLabel extends StatelessWidget {
   final String text;
@@ -461,16 +456,16 @@ class _RequiredLabel extends StatelessWidget {
     return RichText(
       text: TextSpan(
         style: const TextStyle(
-          fontFamily: 'Gilroy',
+          fontFamily: 'Calibri',
           fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: AppTheme.darkGray,
+          fontSize: 15,
+          color: AppTheme.textPrimary,
         ),
         children: [
           TextSpan(text: text),
           const TextSpan(
             text: ' *',
-            style: TextStyle(color: AppTheme.errorRed),
+            style: TextStyle(color: Colors.red),
           ),
         ],
       ),
@@ -491,10 +486,11 @@ class _PickerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isPlaceholder ? const Color(0xFF9E9E9E) : AppTheme.darkGray;
+    final textColor =
+    isPlaceholder ? Colors.grey : AppTheme.textPrimary;
 
     return Material(
-      color: AppTheme.white,
+      color: Colors.white,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
@@ -502,11 +498,9 @@ class _PickerBox extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(8),
-            border: const Border.fromBorderSide(
-              BorderSide(color: AppTheme.textFieldOutline),
-            ),
+            border: Border.all(color: const Color(0xFFD6D6D6)),
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
           ),
           child: Row(
             children: [
@@ -514,81 +508,16 @@ class _PickerBox extends StatelessWidget {
                 child: Text(
                   valueText,
                   style: TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Calibri',
                     fontSize: 16,
                     color: textColor,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Icon(Icons.arrow_drop_down, color: AppTheme.darkGray, size: 24),
+              const Icon(Icons.arrow_drop_down, color: Colors.grey),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// Grey info tile used in the add-ons sheet
-class _GreyTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final Widget? trailing;
-
-  const _GreyTile({
-    required this.title,
-    required this.subtitle,
-    this.trailing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F2F4),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE4E6EA)),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // text
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: AppTheme.darkGray,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
-                    height: 1.4,
-                    color: AppTheme.darkGray,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (trailing != null) ...[
-            const SizedBox(width: 12),
-            trailing!,
-          ],
-        ],
       ),
     );
   }
@@ -604,35 +533,89 @@ class _TextBox extends StatelessWidget {
     return TextField(
       controller: controller,
       style: const TextStyle(
-        fontFamily: 'Gilroy',
-        fontWeight: FontWeight.w400,
+        fontFamily: 'Calibri',
         fontSize: 16,
-        color: AppTheme.darkGray,
+        color: AppTheme.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(
-          fontFamily: 'Gilroy',
-          fontWeight: FontWeight.w400,
-          fontSize: 16,
-          color: Color(0xFF9E9E9E),
+          fontFamily: 'Calibri',
+          fontSize: 15,
+          color: Colors.grey,
         ),
         filled: true,
-        fillColor: AppTheme.white,
+        fillColor: Colors.white,
         contentPadding:
         const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppTheme.textFieldOutline),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFD6D6D6)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppTheme.textFieldOutline),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFFD6D6D6)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppTheme.lightBlue, width: 1.5),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color(0xFFD6D6D6), // stays gray on focus
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _GreyTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final Widget? trailing;
+
+  const _GreyTile({
+    required this.title,
+    required this.subtitle,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F6F6),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFE4E6EA)),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                        fontFamily: 'Calibri',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: AppTheme.textPrimary)),
+                const SizedBox(height: 6),
+                Text(subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'Calibri',
+                      fontSize: 14,
+                      height: 1.4,
+                      color: AppTheme.textPrimary,
+                    )),
+              ],
+            ),
+          ),
+          if (trailing != null) ...[
+            const SizedBox(width: 10),
+            trailing!,
+          ],
+        ],
       ),
     );
   }
@@ -647,13 +630,12 @@ class _NoteParagraph extends StatelessWidget {
       textAlign: TextAlign.center,
       text: const TextSpan(
         style: TextStyle(
-          fontFamily: 'Gilroy',
+          fontFamily: 'Calibri',
           fontSize: 15,
-          height: 1.5,
-          color: AppTheme.darkGray,
+          color: AppTheme.textPrimary,
         ),
         children: [
-          TextSpan(text: 'Note: ', style: TextStyle(fontWeight: FontWeight.w600)),
+          TextSpan(text: 'Note: ', style: TextStyle(fontWeight: FontWeight.bold)),
           TextSpan(
             text:
             'Top up conveniently using Paybill Number 700201 and your account number which will be sent to you on SMS and email.',
@@ -664,16 +646,19 @@ class _NoteParagraph extends StatelessWidget {
   }
 }
 
-//modal single-select picker
+/* -------------- Picker Modal (Dropdown Sheet) -------------- */
+
 class _SingleSelectPickerSheet extends StatefulWidget {
   final String title;
   final List<String> items;
   final String? selectedValue;
+  final Color navyColor;
 
   const _SingleSelectPickerSheet({
     required this.title,
     required this.items,
     required this.selectedValue,
+    required this.navyColor,
   });
 
   @override
@@ -713,62 +698,39 @@ class _SingleSelectPickerSheetState extends State<_SingleSelectPickerSheet> {
     return SafeArea(
       top: false,
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
-        ),
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey[200]!),
-                ),
-              ),
+            // header
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
               child: Row(
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.lightBlue,
-                    ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontSize: 16,
-                        color: AppTheme.lightBlue,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
+                    child: Text('Cancel',
+                        style: TextStyle(
+                            fontFamily: 'Calibri',
+                            color: widget.navyColor,
+                            fontSize: 16)),
                   ),
                   Expanded(
-                    child: Text(
-                      widget.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    child: Text(widget.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontFamily: 'Calibri',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.black)),
                   ),
                   const SizedBox(width: 60),
                 ],
               ),
             ),
-
-            // Search
+            // search box
             Padding(
               padding: const EdgeInsets.all(20),
               child: TextField(
@@ -778,30 +740,28 @@ class _SingleSelectPickerSheetState extends State<_SingleSelectPickerSheet> {
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: const BorderSide(color: Color(0xFFD6D6D6)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                    borderSide: const BorderSide(color: Color(0xFFD6D6D6)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppTheme.lightBlue),
+                    borderSide:
+                    const BorderSide(color: Color(0xFFD6D6D6)), // neutral
                   ),
                   filled: true,
                   fillColor: Colors.grey[50],
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
-
-            // List
+            // options
             Expanded(
               child: ListView.separated(
                 itemCount: _filtered.length,
                 separatorBuilder: (_, __) => const Divider(
                   height: 1,
-                  thickness: 1,
                   color: Color(0xFFE5E5E5),
                   indent: 56,
                   endIndent: 16,
@@ -809,34 +769,32 @@ class _SingleSelectPickerSheetState extends State<_SingleSelectPickerSheet> {
                 itemBuilder: (context, index) {
                   final text = _filtered[index];
                   final isSelected = widget.selectedValue == text;
-
                   return ListTile(
                     contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16),
                     leading: Container(
-                      width: 24,
-                      height: 24,
+                      width: 22,
+                      height: 22,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected
-                              ? AppTheme.lightGreen
-                              : Colors.grey[400]!,
+                          color:
+                          isSelected ? widget.navyColor : Colors.grey[400]!,
                           width: 2,
                         ),
                         color: isSelected
-                            ? AppTheme.lightGreen
+                            ? widget.navyColor
                             : Colors.transparent,
                       ),
                       child: isSelected
                           ? const Icon(Icons.check,
-                          size: 16, color: Colors.white)
+                          size: 14, color: Colors.white)
                           : null,
                     ),
                     title: Text(
                       text,
                       style: const TextStyle(
-                        fontFamily: 'Gilroy',
+                        fontFamily: 'Calibri',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
