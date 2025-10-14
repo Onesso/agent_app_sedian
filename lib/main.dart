@@ -3,7 +3,6 @@ import 'screens/splash_screen.dart';
 import 'screens/agent_login_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/individual_account_screen.dart';
-import 'screens/account_requirements_screen.dart';
 import 'screens/account_registration_screen.dart';
 import 'screens/identity_verification_screen.dart';
 import 'screens/address_details_screen.dart';

@@ -66,14 +66,7 @@ class _IdentityVerificationScreenState extends State<IdentityVerificationScreen>
           icon: const Icon(Icons.arrow_back, color: sidianNavy),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Identity Verification",
-          style: TextStyle(
-            fontFamily: 'Calibri',
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textPrimary,
-          ),
-        ),
+
       ),
       body: SafeArea(
         child: Column(
