@@ -1,6 +1,6 @@
-# agent_app_ecobank
+# agent_app_sedian
 
-Ecobank Agent App
+Sidian Agent App
 
 ## Getting Started
 

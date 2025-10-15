@@ -3,7 +3,6 @@ import 'screens/splash_screen.dart';
 import 'screens/agent_login_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/individual_account_screen.dart';
-import 'screens/account_requirements_screen.dart';
 import 'screens/account_registration_screen.dart';
 import 'screens/identity_verification_screen.dart';
 import 'screens/address_details_screen.dart';
@@ -28,18 +27,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Ecobank Agent Onboarding',
+      title: 'Sidian Agent Onboarding',
       theme: AppTheme.light(),
       debugShowCheckedModeBanner: false,
-      builder: (context, child) =>
-          ConnectivityWatcher(child: child ?? const SizedBox()),
+      // builder: (context, child) =>
+      //     ConnectivityWatcher(child: child ?? const SizedBox()),
       home: const SplashScreen(),
       routes: {
         '/agent-login': (context) => const AgentLoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/view-all-accounts': (context) => ViewAllAccountsScreen(),
         '/individual-account': (context) => const IndividualAccountScreen(),
-        '/account-requirements': (context) => const AccountRequirementsScreen(),
         '/account-registration': (context) => const AccountRegistrationScreen(),
         '/identity-verification': (context) => const IdentityVerificationScreen(),
         '/address-details': (context) => const AddressDetailsScreen(),

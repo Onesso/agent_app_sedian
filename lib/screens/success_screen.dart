@@ -1,88 +1,79 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key});
 
+  static const Color sidianNavy = Color(0xFF0B2240);
+  static const Color sidianOlive = Color(0xFF7A7A18);
+  static const Color sidianGray = Color(0xFFD6D6D6);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppTheme.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Image.asset(
-              'assets/images/Ecobank-logo.png',
-              height: 24,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Success Icon
-              Center(
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.successGreen,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.check, color: Colors.white, size: 60),
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: sidianOlive.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: sidianOlive, width: 2),
+                ),
+                child: const Icon(
+                  Icons.check_circle_rounded,
+                  color: sidianOlive,
+                  size: 70,
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 36),
 
-              // Title
-              const Center(
-                child: Text(
-                  'Details Submitted Successfully!',
-                  style: TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    color: AppTheme.infoBlue,
-                  ),
-                  textAlign: TextAlign.center,
+              //  Title
+              const Text(
+                'Details Submitted Successfully!',
+                style: TextStyle(
+                  fontFamily: 'Calibri',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: sidianNavy,
                 ),
+                textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 42),
+              const SizedBox(height: 28),
 
-              // Paragraphs
               Text.rich(
                 TextSpan(
                   style: const TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Calibri',
                     fontSize: 16,
-                    height: 1.5,
-                    color: AppTheme.darkGray,
+                    height: 1.6,
+                    color: sidianNavy,
                   ),
                   children: const [
                     TextSpan(
                       text:
-                      'We will open customer\'s account and notify them their account number ',
+                      'We will open the customer’s account and notify them of their account number ',
                     ),
                     TextSpan(
-                      text: 'within the hour',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                      text: 'within the hour.',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
               ),
 
               const SizedBox(height: 16),
@@ -90,61 +81,66 @@ class SuccessScreen extends StatelessWidget {
               Text.rich(
                 TextSpan(
                   style: const TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Calibri',
                     fontSize: 16,
-                    height: 1.5,
-                    color: AppTheme.darkGray,
+                    height: 1.6,
+                    color: sidianNavy,
                   ),
                   children: [
-                    const TextSpan(
-                      text: 'If they do not receive it by then please ',
-                    ),
+                    const TextSpan(text: 'If they do not receive it by then, please '),
                     TextSpan(
                       text: 'contact us',
                       style: const TextStyle(
-                        color: AppTheme.infoBlue,
+                        color: sidianOlive,
                         decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.w600,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => _onContactTap(context),
                     ),
-                    const TextSpan(text: ' for assistance'),
+                    const TextSpan(text: ' for assistance.'),
                   ],
                 ),
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 56),
+              const SizedBox(height: 40),
+
+              Container(
+                width: 80,
+                height: 2,
+                color: sidianGray,
+              ),
+
+              const SizedBox(height: 40),
 
               const Text(
-                'Please proceed to complete their onboarding process',
+                'You may now proceed to complete the customer’s onboarding process.',
                 style: TextStyle(
-                  fontFamily: 'Gilroy',
-                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Calibri',
                   fontSize: 16,
-                  height: 1.5,
-                  color: AppTheme.darkGray,
+                  height: 1.6,
+                  color: sidianNavy,
                 ),
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
               ),
 
               const Spacer(),
 
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 54,
                 child: ElevatedButton(
                   onPressed: () => _handleClose(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.lightGreen,
-                    foregroundColor: AppTheme.darkBlueHighlight,
+                    backgroundColor: sidianNavy,
+                    foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(28),
                     ),
                     textStyle: const TextStyle(
-                      fontFamily: 'Gilroy',
+                      fontFamily: 'Calibri',
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -160,8 +156,12 @@ class SuccessScreen extends StatelessWidget {
   }
 
   static void _onContactTap(BuildContext context) {
-    // TODO: route to help/contact screen or open mail/phone.
-    // Navigator.pushNamed(context, '/contact');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Contact support coming soon...'),
+        backgroundColor: sidianNavy,
+      ),
+    );
   }
 
   void _handleClose(BuildContext context) {

@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../theme/app_theme.dart';
 import '../utils/alert_utils.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  final String phoneNumber;
+  final String phoneNumber; // E.164 format e.g. +254712345678
   final String email;
 
   const OtpVerificationScreen({
@@ -20,77 +19,75 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final List<TextEditingController> _controllers =
-      List.generate(6, (_) => TextEditingController());
+  List.generate(6, (_) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   Timer? _timer;
-  int _timeRemaining = 60; // Starting time in seconds
+  int _timeRemaining = 60;
+  bool _submitting = false;
+  bool _resending = false;
+
+  static const Color sidianNavy = Color(0xFF0B2240);
+  static const Color sidianOlive = Color(0xFF7A7A18);
+  static const Color sidianGray = Color(0xFFD6D6D6);
 
   @override
   void initState() {
     super.initState();
     _startTimer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNodes[0].requestFocus();
+      _focusNodes.first.requestFocus();
     });
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
+    for (final c in _controllers) c.dispose();
+    for (final f in _focusNodes) f.dispose();
     super.dispose();
   }
 
+  /* ---------------- Timer ---------------- */
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (_timeRemaining > 0) {
-        setState(() {
-          _timeRemaining--;
-        });
+        setState(() => _timeRemaining--);
       } else {
-        timer.cancel();
-        _handleTimeout();
+        t.cancel();
+        showSidianAlert(
+          context,
+          message: 'OTP expired. Please request a new one.',
+          type: AlertType.error,
+        );
       }
     });
   }
 
-  void _handleTimeout() {
-    showEcobankAlert(
-      context,
-      message: 'OTP has expired. Please request a new one.',
-      type: AlertType.error,
-    );
-  }
-
   String get _formattedTime {
-    final minutes = _timeRemaining ~/ 60;
-    final seconds = _timeRemaining % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    final m = _timeRemaining ~/ 60;
+    final s = _timeRemaining % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
+  /* ---------------- Helpers ---------------- */
   String get _maskedPhoneNumber {
-    if (widget.phoneNumber.length >= 4) {
-      return '****${widget.phoneNumber.substring(widget.phoneNumber.length - 4)}';
-    }
-    return widget.phoneNumber;
+    final p = widget.phoneNumber;
+    if (p.length >= 4) return '****${p.substring(p.length - 4)}';
+    return p;
   }
 
   String get _maskedEmail {
-    if (widget.email.contains('@')) {
-      final parts = widget.email.split('@');
-      final username = parts[0];
-      final domain = parts[1];
-      final maskedUsername =
-          username.length > 4 ? '${username.substring(0, 4)}****' : username;
-      return '$maskedUsername@$domain';
+    final e = widget.email;
+    if (e.contains('@')) {
+      final parts = e.split('@');
+      final user = parts[0];
+      final dom = parts[1];
+      final maskedUser = user.length > 3 ? '${user.substring(0, 3)}***' : user;
+      return '$maskedUser@$dom';
     }
-    return widget.email;
+    return e;
   }
 
   void _onDigitChanged(String value, int index) {
@@ -101,88 +98,79 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         _focusNodes[index].unfocus();
       }
     }
+    setState(() {});
   }
 
-  void _onDigitBackspace(int index) {
-    if (index > 0 && _controllers[index].text.isEmpty) {
-      _focusNodes[index - 1].requestFocus();
-    }
+  String get _otpValue => _controllers.map((c) => c.text).join();
+  bool get _isOtpComplete => _otpValue.length == 6;
+
+  void _clearOtp() {
+    for (final c in _controllers) c.clear();
+    _focusNodes.first.requestFocus();
+    setState(() {});
   }
 
-  String get _otpValue {
-    return _controllers.map((controller) => controller.text).join();
-  }
-
-  bool get _isOtpComplete {
-    return _otpValue.length == 6 &&
-        _otpValue.split('').every((digit) => digit.isNotEmpty);
-  }
-
+  /* ---------------- Submit Simulation ---------------- */
   Future<void> _submitOtp() async {
     if (!_isOtpComplete) {
-      showEcobankAlert(
+      showSidianAlert(
         context,
-        message: 'Please enter complete OTP',
+        message: 'Please enter the full 6-digit OTP.',
         type: AlertType.error,
       );
       return;
     }
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: AppTheme.lightGreen),
-      ),
-    );
-
+    setState(() => _submitting = true);
     await Future.delayed(const Duration(seconds: 2));
+    setState(() => _submitting = false);
 
     if (!mounted) return;
-    Navigator.pop(context); // Remove loading dialog
 
-    if (_otpValue == '123456') {
-      // Demo OTP for testing
-      showEcobankAlert(
-        context,
-        message: 'OTP verified successfully!',
-        type: AlertType.success,
-      );
+    showSidianAlert(
+      context,
+      message: 'Verification successful!',
+      type: AlertType.success,
+    );
+
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
       Navigator.pushReplacementNamed(context, '/success');
-    } else {
-      showEcobankAlert(
-        context,
-        message: 'Invalid OTP. Please try again.',
-        type: AlertType.error,
-      );
-      for (var controller in _controllers) {
-        controller.clear();
-      }
-      _focusNodes[0].requestFocus();
     }
   }
 
+  Future<void> _resendOtp() async {
+    if (_resending) return;
+    setState(() => _resending = true);
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    setState(() {
+      _resending = false;
+      _timeRemaining = 60;
+    });
+    _startTimer();
+
+    showSidianAlert(
+      context,
+      message: 'A new OTP has been sent to customer\'s phone and email.',
+      type: AlertType.info,
+    );
+  }
+
+  /* ---------------- UI ---------------- */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppTheme.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.lightBlue),
+          icon: const Icon(Icons.arrow_back, color: sidianNavy),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Image.asset(
-              'assets/images/Ecobank-logo.png',
-              height: 24,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -190,180 +178,191 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 8),
               const Text(
                 'Verify with OTP',
                 style: TextStyle(
-                  fontFamily: 'Gilroy',
-                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Calibri',
+                  fontWeight: FontWeight.bold,
                   fontSize: 22,
-                  color: AppTheme.darkGray,
+                  color: sidianNavy,
                 ),
               ),
               const SizedBox(height: 24),
               RichText(
                 text: TextSpan(
                   style: const TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Calibri',
                     fontSize: 16,
-                    height: 1.4,
-                    color: AppTheme.darkGray,
+                    color: sidianNavy,
+                    height: 1.5,
                   ),
                   children: [
                     const TextSpan(
-                        text:
-                            'A one-time PIN (OTP) has been sent to customer\'s mobile number at '),
+                      text:
+                      'A one-time PIN has been sent to customer\'s mobile number ',
+                    ),
                     TextSpan(
                       text: _maskedPhoneNumber,
                       style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.lightBlue,
+                        color: sidianOlive,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const TextSpan(text: ' and email at '),
+                    const TextSpan(text: ' and email '),
                     TextSpan(
                       text: _maskedEmail,
                       style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.lightBlue,
+                        color: sidianOlive,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const TextSpan(
-                        text:
-                            '. Please enter it below to verify their mobile number'),
+                    const TextSpan(text: '.'),
                   ],
                 ),
               ),
               const SizedBox(height: 48),
+
+              // OTP input boxes
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
+                children: List.generate(6, (i) {
                   return SizedBox(
                     width: 45,
                     height: 55,
-                    child: RawKeyboardListener(
-                      focusNode: FocusNode(), // new focus node for the listener
-                      onKey: (event) {
-                        if (event is RawKeyDownEvent &&
-                            event.logicalKey == LogicalKeyboardKey.backspace) {
-                          // If current field is empty, move focus back
-                          if (_controllers[index].text.isEmpty && index > 0) {
-                            _focusNodes[index - 1].requestFocus();
-                          }
-                        }
-                      },
-                      child: TextField(
-                        controller: _controllers[index],
-                        focusNode: _focusNodes[index],
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        maxLength: 1,
-                        style: const TextStyle(
-                          fontFamily: 'Gilroy',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                          color: AppTheme.darkGray,
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        decoration: InputDecoration(
-                          counterText: '',
-                          contentPadding: const EdgeInsets.all(0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: AppTheme.darkGray.withOpacity(0.3),
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(
-                              color: AppTheme.lightBlue,
-                              width: 2,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: AppTheme.darkGray.withOpacity(0.3),
-                              width: 1.5,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          if (value.isNotEmpty && index < 5) {
-                            _focusNodes[index + 1]
-                                .requestFocus(); // move forward
-                          }
-                          _onDigitChanged(value, index);
-                        },
-                        onTap: () {
-                          _controllers[index].selection =
-                              TextSelection.fromPosition(
-                            TextPosition(
-                                offset: _controllers[index].text.length),
-                          );
-                        },
+                    child: TextField(
+                      controller: _controllers[i],
+                      focusNode: _focusNodes[i],
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      maxLength: 1,
+                      style: const TextStyle(
+                        fontFamily: 'Calibri',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: sidianNavy,
                       ),
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        counterText: '',
+                        contentPadding: EdgeInsets.zero,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                          const BorderSide(color: sidianGray, width: 1.3),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                          const BorderSide(color: sidianNavy, width: 2.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                          const BorderSide(color: sidianGray, width: 1.3),
+                        ),
+                      ),
+                      onChanged: (v) => _onDigitChanged(v, i),
                     ),
                   );
                 }),
               ),
-              const SizedBox(height: 40),
+
+              const SizedBox(height: 36),
+
+              // Timer or resend
               Center(
-                child: Text(
-                  'Time Remaining: $_formattedTime',
+                child: _timeRemaining > 0
+                    ? Text(
+                  'Time remaining: $_formattedTime',
                   style: const TextStyle(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                    color: AppTheme.darkGray,
+                    fontFamily: 'Calibri',
+                    fontSize: 15,
+                    color: sidianNavy,
+                  ),
+                )
+                    : TextButton(
+                  onPressed: _resendOtp,
+                  child: _resending
+                      ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child:
+                    CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : const Text(
+                    'Resend OTP',
+                    style: TextStyle(
+                      fontFamily: 'Calibri',
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: sidianOlive,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+
+              const SizedBox(height: 48),
+
+              // Submit button
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 54,
                 child: ElevatedButton(
-                  onPressed: _timeRemaining > 0 ? _submitOtp : null,
+                  onPressed: (_isOtpComplete && !_submitting)
+                      ? _submitOtp
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isOtpComplete && _timeRemaining > 0
-                        ? AppTheme.lightGreen
-                        : AppTheme.lightGreen.withOpacity(0.6),
-                    foregroundColor: _isOtpComplete && _timeRemaining > 0
-                        ? AppTheme.darkBlueHighlight
-                        : const Color(0xFF9E9E9E),
-                    elevation: 0,
+                    backgroundColor: sidianNavy,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: sidianNavy.withOpacity(0.3),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(28),
                     ),
+                    elevation: 0,
                     textStyle: const TextStyle(
-                      fontFamily: 'Gilroy',
-                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Calibri',
                       fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  child: const Text('Submit'),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: TextButton(
-                  onPressed: _timeRemaining == 0 ? _resendOtp : null,
-                  child: Text(
-                    _timeRemaining == 0
-                        ? 'Resend OTP'
-                        : 'Resend OTP in $_formattedTime',
-                    style: TextStyle(
-                      fontFamily: 'Gilroy',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: _timeRemaining == 0
-                          ? AppTheme.lightBlue
-                          : AppTheme.darkGray.withOpacity(0.6),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: _submitting
+                        ? Row(
+                      key: const ValueKey('verifying'),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'Verifying...',
+                          style: TextStyle(
+                            fontFamily: 'Calibri',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    )
+                        : const Text(
+                      'Verify OTP',
+                      key: ValueKey('verify'),
+                      style: TextStyle(
+                        fontFamily: 'Calibri',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -372,24 +371,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  void _resendOtp() {
-    setState(() {
-      _timeRemaining = 60; // Reset timer to 1 minute
-    });
-    _startTimer();
-
-    for (var controller in _controllers) {
-      controller.clear();
-    }
-    _focusNodes[0].requestFocus();
-
-    showEcobankAlert(
-      context,
-      message: 'New OTP sent successfully!',
-      type: AlertType.info,
     );
   }
 }

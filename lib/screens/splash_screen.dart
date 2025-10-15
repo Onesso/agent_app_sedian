@@ -9,117 +9,110 @@ class SplashScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          // Background Image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background-img.jpg'),
+                image: AssetImage('assets/images/welcome-bg.jpg'),
                 fit: BoxFit.cover,
-                alignment: Alignment(0, -0.2),
+                alignment: Alignment.center,
               ),
             ),
           ),
 
-          // Content overlay
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
+          // Gradient overlay (black → translucent yellow)
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xCC000000), // 90% black – subtle top dark overlay
+                  Color(0x80FFFF00), // 50% transparent yellow bottom glow
+                ],
+                stops: [0.0, 1.0],
+              ),
+            ),
+          ),
 
+
+          // Content
+          SafeArea(
+            child: Column(
+              children: [
+                const Spacer(flex: 5),
+
+                // Sidian Logo
                 Image.asset(
-                  'assets/images/ek-logo.png',
-                  height: 70,
+                  'assets/images/sidian_b.png',
+                  height: 140,
                   fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 100),
 
-                // Welcome title
+                const SizedBox(height: 50),
+
+                // Title
                 Text(
-                  "Welcome to\nEcobank's Digital\nAccount Opening",
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  "Welcome to Sidian\nOnline Account Opening",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    fontFamily: 'Calibri',
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     fontSize: 28,
-                    fontFamily: 'Gilroy',
                     height: 1.3,
-                    letterSpacing: 0.2,
-                    color: AppTheme.white,
-                    fontWeight: FontWeight.w900,
                   ),
-                  textAlign: TextAlign.left,
                 ),
-                const SizedBox(height: 16),
 
-                // Description
+                const SizedBox(height: 45),
+
+                // Subtitle
                 Text(
-                  "Open your new account online quickly,\n"
-                      "easy, anytime and anywhere with\n"
-                      "just a few steps.",
+                  "Powered by Sidian Bank",
+                  textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontFamily: 'Gilroy',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                    letterSpacing: 0.2,
-                    color: AppTheme.white.withOpacity(0.9),
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-                const SizedBox(height: 40),
-
-                // Let's Get Started Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/agent-login');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.lightGreen,
-                      foregroundColor: AppTheme.darkGray,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Let\'s Get Started',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    fontFamily: 'Calibri',
+                    fontStyle: FontStyle.italic,
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 18,
                   ),
                 ),
-                const SizedBox(height: 24),
 
-                // Need Help section
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Need Help?',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.white.withOpacity(0.8),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: () {
-                        // TODO: Implement call functionality
+                const Spacer(flex: 4),
+
+                // Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/agent-login');
                       },
-                      child: Text(
-                        'Call Us at (+254) 709 573 000',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.white,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        elevation: 4,
+                        shadowColor: Colors.black.withOpacity(0.3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: const Text(
+                        'Continue To Create Account',
+                        style: TextStyle(
+                          fontFamily: 'Calibri',
                           fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
 
-                const Spacer(flex: 2),
+                const SizedBox(height: 40),
               ],
             ),
           ),
